@@ -47,9 +47,9 @@ jobs:
           python-version: '3.12'
       - name: Install Miasm
         run: |
-          python -m venv .venv
-          .venv/bin/python -m pip install -r python/requirements.txt
-          echo "MIASM_PYTHON=$GITHUB_WORKSPACE/.venv/bin/python" >> "$GITHUB_ENV"
+          python -m venv "$RUNNER_TEMP/miasm-venv"
+          "$RUNNER_TEMP/miasm-venv/bin/python" -m pip install -r python/requirements.txt
+          echo "MIASM_PYTHON=$RUNNER_TEMP/miasm-venv/bin/python" >> "$GITHUB_ENV"
       - name: Generate test fixtures
         run: python scripts/make_fixtures.py
       - name: Check formatting

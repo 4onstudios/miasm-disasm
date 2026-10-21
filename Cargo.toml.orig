@@ -1,0 +1,21 @@
+[package]
+name = "miasm-disasm"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.85"
+description = "Rust CLI and typed library for static disassembly through Miasm"
+license = "GPL-2.0-only"
+readme = "README.md"
+keywords = ["disassembler", "miasm", "reverse-engineering", "binary", "pe"]
+categories = ["command-line-utilities", "development-tools"]
+include = ["src/*.rs", "python/*.py", "python/requirements.txt", "tests/*.rs", "examples/*", "scripts/*.py", "Cargo.toml", "Cargo.lock", "README.md", "LICENSE", "CHANGELOG.md", "TESTING.md", "NOTICE"]
+
+[dependencies]
+clap = { version = "=4.5.31", features = ["derive", "env"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+[profile.release]
+lto = "off"
+strip = true
+

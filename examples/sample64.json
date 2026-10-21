@@ -1,0 +1,135 @@
+{
+  "protocol": 1,
+  "miasm_version": "0.1.5",
+  "format": "PE",
+  "architecture": "x86_64",
+  "mode": "cfg",
+  "entry_point": 5368713216,
+  "start_address": 5368713216,
+  "truncated": false,
+  "instruction_count": 9,
+  "blocks": [
+    {
+      "address": 5368713216,
+      "label": "loc_140001000",
+      "instructions": [
+        {
+          "address": 5368713216,
+          "size": 5,
+          "bytes": "b905000000",
+          "mnemonic": "MOV",
+          "text": "MOV        ECX, 0x5"
+        },
+        {
+          "address": 5368713221,
+          "size": 5,
+          "bytes": "e806000000",
+          "mnemonic": "CALL",
+          "text": "CALL       loc_140001010"
+        }
+      ],
+      "successors": [
+        {
+          "address": 5368713226,
+          "kind": "c_next"
+        },
+        {
+          "address": 5368713232,
+          "kind": "c_to"
+        }
+      ],
+      "error": null
+    },
+    {
+      "address": 5368713226,
+      "label": "loc_14000100a",
+      "instructions": [
+        {
+          "address": 5368713226,
+          "size": 1,
+          "bytes": "c3",
+          "mnemonic": "RET",
+          "text": "RET        "
+        }
+      ],
+      "successors": [],
+      "error": null
+    },
+    {
+      "address": 5368713232,
+      "label": "loc_140001010",
+      "instructions": [
+        {
+          "address": 5368713232,
+          "size": 2,
+          "bytes": "85c9",
+          "mnemonic": "TEST",
+          "text": "TEST       ECX, ECX"
+        },
+        {
+          "address": 5368713234,
+          "size": 2,
+          "bytes": "7e04",
+          "mnemonic": "JLE",
+          "text": "JLE        loc_140001018"
+        }
+      ],
+      "successors": [
+        {
+          "address": 5368713236,
+          "kind": "c_next"
+        },
+        {
+          "address": 5368713240,
+          "kind": "c_to"
+        }
+      ],
+      "error": null
+    },
+    {
+      "address": 5368713236,
+      "label": "loc_140001014",
+      "instructions": [
+        {
+          "address": 5368713236,
+          "size": 3,
+          "bytes": "8d4101",
+          "mnemonic": "LEA",
+          "text": "LEA        EAX, DWORD PTR [RCX + 0x1]"
+        },
+        {
+          "address": 5368713239,
+          "size": 1,
+          "bytes": "c3",
+          "mnemonic": "RET",
+          "text": "RET        "
+        }
+      ],
+      "successors": [],
+      "error": null
+    },
+    {
+      "address": 5368713240,
+      "label": "loc_140001018",
+      "instructions": [
+        {
+          "address": 5368713240,
+          "size": 2,
+          "bytes": "31c0",
+          "mnemonic": "XOR",
+          "text": "XOR        EAX, EAX"
+        },
+        {
+          "address": 5368713242,
+          "size": 1,
+          "bytes": "c3",
+          "mnemonic": "RET",
+          "text": "RET        "
+        }
+      ],
+      "successors": [],
+      "error": null
+    }
+  ],
+  "warnings": []
+}

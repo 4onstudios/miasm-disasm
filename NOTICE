@@ -1,0 +1,14 @@
+miasm-disasm 0.1.0
+
+Original Rust wrapper, Python bridge, tests, and sample-fixture generator.
+Distributed under GPL-2.0-only. See LICENSE for the full license text.
+
+Runtime dependency: Miasm, by Fabrice Desclaux and contributors.
+Project: https://github.com/cea-sec/miasm
+License: GPL-2.0-only
+Pinned source: 3671fc24d6e625c2d75f3311724eb6b0c97664f8
+Miasm source is fetched separately by python/requirements.txt and is not vendored.
+
+Rust dependencies and their resolved versions are recorded in Cargo.lock.
+Their upstream licenses apply to those separately distributed components.
+

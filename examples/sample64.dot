@@ -1,0 +1,12 @@
+digraph disassembly {
+  node [shape=box, fontname="monospace"];
+  n140001000 [label="0x140001000\l140001000: MOV        ECX, 0x5\l140001005: CALL       loc_140001010\l"];
+  n140001000 -> n14000100a [label="c_next"];
+  n140001000 -> n140001010 [label="c_to"];
+  n14000100a [label="0x14000100a\l14000100a: RET        \l"];
+  n140001010 [label="0x140001010\l140001010: TEST       ECX, ECX\l140001012: JLE        loc_140001018\l"];
+  n140001010 -> n140001014 [label="c_next"];
+  n140001010 -> n140001018 [label="c_to"];
+  n140001014 [label="0x140001014\l140001014: LEA        EAX, DWORD PTR [RCX + 0x1]\l140001017: RET        \l"];
+  n140001018 [label="0x140001018\l140001018: XOR        EAX, EAX\l14000101a: RET        \l"];
+}

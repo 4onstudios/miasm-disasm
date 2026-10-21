@@ -2,4 +2,3 @@
 miasm @ https://github.com/cea-sec/miasm/archive/3671fc24d6e625c2d75f3311724eb6b0c97664f8.tar.gz
 future==1.0.0
 pyparsing==3.3.2
-

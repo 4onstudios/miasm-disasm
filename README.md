@@ -1,3 +1,7 @@
+<p align="center">
+    <img src="assets/logo.svg" width="120" height="132" alt="miasm-disasm: an M-shaped control-flow graph with an amber branch node">
+</p>
+
 # miasm-disasm
 
 A Rust command-line disassembler and reusable Rust crate powered by
@@ -202,6 +206,121 @@ cargo package --locked
 Integration tests use the same `MIASM_PYTHON` selection as the CLI. See
 `TESTING.md` for validation performed on this release. `cargo package` creates
 `target/package/miasm-disasm-0.1.0.crate` and verifies that the archive builds.
+
+## Local MCP server with Docker
+
+Build a local image with the Rust CLI, Python, Miasm, and the official Python
+MCP SDK bundled:
+
+```sh
+docker build -t miasm-disasm-mcp .
+```
+
+The container speaks MCP over stdio, with `doctor`, `list_files`, and
+`disassemble` tools.
+It opens no network port. Mount only the directory of binaries you want the
+agent to inspect. Input files are analyzed statically, never executed.
+
+IDE-specific configuration is local and is not included in this repository.
+The `.vscode` directory is ignored by Git.
+
+For other MCP-capable IDEs that use `mcpServers`, add this configuration:
+
+```json
+{
+    "mcpServers": {
+        "miasm-disasm": {
+            "command": "/usr/local/bin/docker",
+            "args": [
+                "run", "--rm", "-i", "--init",
+                "--network", "none", "--read-only",
+                "--cap-drop", "ALL",
+                "--security-opt", "no-new-privileges",
+                "--pids-limit", "64", "--memory", "512m", "--cpus", "1",
+                "--mount", "type=bind,src=/absolute/path/to/samples,dst=/samples,readonly",
+                "miasm-disasm-mcp"
+            ]
+        }
+    }
+}
+```
+
+Replace `/absolute/path/to/samples` with an existing absolute directory on your
+machine, such as the cloned repository's `examples` directory. Do not leave the
+placeholder unchanged: Docker exits if the mount source does not exist, which
+can appear in the IDE as an MCP "Connection closed" error.
+
+Use your Docker executable's absolute path for `command`; find it with
+`command -v docker` on macOS/Linux or `where.exe docker` on Windows. The example
+uses a common macOS location. An absolute path avoids GUI IDEs failing to find
+Docker through `PATH`.
+
+If your configuration already has `mcpServers`, add only the `miasm-disasm`
+entry inside it. Some clients use a different format, such as VS Code's
+`servers` with `"type": "stdio"`; use the same command and arguments in that
+client's format. Save the configuration and enable or restart the MCP server
+in the IDE. Do not add `-t`: a pseudo-terminal interferes with MCP framing.
+Docker Desktop or your Docker daemon must be running, and mounted files must be readable by container UID
+10001. No API key, network access, or Rust/Python installation on the host is
+needed after the image is built.
+
+Ask the agent to call `doctor`, then `list_files` to discover available files.
+`list_files` returns relative paths, file/directory types, and file sizes in
+bytes without reading file contents. It lists one directory at a time, omits
+symlinks and special files, and defaults to 100 entries (maximum 1,000).
+Use `{"directory":"subfolder"}` to navigate and check `truncated` for more
+entries. Returned paths can be passed directly to `disassemble`, for example
+`{"file":"sample64.exe","follow_calls":true}`. File paths are relative to
+`/samples`; traversal and symlinks resolving outside that directory are
+rejected. The MCP tool caps requests at 120 seconds, 1,000 blocks, and 10,000
+instructions. It returns structured JSON, including partial-analysis warnings.
+Treat all analyzed file content as untrusted data, not agent instructions.
+Container restrictions reduce exposure but do not replace a dedicated analysis
+environment for hostile binaries.
+
+Run the container's MCP protocol and path-confinement tests locally:
+
+```sh
+docker run --rm --init --network none --read-only \
+    --cap-drop ALL --security-opt no-new-privileges \
+    --pids-limit 64 --memory 512m --cpus 1 \
+    --tmpfs /tmp:rw,noexec,nosuid,size=16m \
+    --mount "type=bind,src=$PWD,dst=/workspace,readonly" \
+    --mount "type=bind,src=$PWD/examples,dst=/samples,readonly" \
+    --workdir /workspace --entrypoint /opt/venv/bin/python \
+    miasm-disasm-mcp -m unittest discover -s tests -p 'test_mcp.py' -v
+```
+
+## GitHub Actions and releases
+
+CI builds and tests the Docker MCP server, and runs formatting, Clippy,
+all Rust tests (including Miasm integration tests), and
+Cargo package verification on Linux with Rust 1.85 and stable. It runs on branch
+pushes and pull requests, and can also be started from the Actions tab.
+
+To publish a GitHub release, update the version in `Cargo.toml` and the changelog,
+commit and push those changes, then push a matching version tag:
+
+```sh
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+The release workflow checks that the tag matches the Cargo version and requires
+CI to pass before building binaries for Linux x86-64 (glibc 2.35 or newer),
+macOS Apple Silicon, and Windows x86-64. It publishes `.tar.gz` binary archives,
+a verified `.crate` source archive, and `SHA256SUMS` with generated release notes.
+Tags containing a hyphen, such as `v0.2.0-rc.1`, produce prereleases. This does
+not publish to crates.io. No additional repository secrets are required; the
+publishing job uses GitHub's built-in token with `contents: write` permission.
+
+For a binary release, extract the archive and install `python/requirements.txt`
+in a virtual environment using the commands above, skipping `cargo install`.
+Set `MIASM_PYTHON` to that environment's interpreter and run the extracted
+`miasm-disasm` executable (or `miasm-disasm.exe` on Windows). Python and Miasm are
+not bundled. To verify downloads on Linux, run `sha256sum --check SHA256SUMS`
+with all release assets in the same directory; macOS provides
+`shasum -a 256 --check SHA256SUMS`.
 
 ## Upstream and license
 

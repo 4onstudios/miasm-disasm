@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mcp:
+    name: Docker MCP integration
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build MCP image
+        run: docker build -t miasm-disasm-mcp .
+      - name: Test MCP protocol and file confinement
+        run: |
+          docker run --rm --init --network none --read-only \
+            --cap-drop ALL --security-opt no-new-privileges \
+            --pids-limit 64 --memory 512m --cpus 1 \
+            --tmpfs /tmp:rw,noexec,nosuid,size=16m \
+            --mount "type=bind,src=$GITHUB_WORKSPACE,dst=/workspace,readonly" \
+            --mount "type=bind,src=$GITHUB_WORKSPACE/examples,dst=/samples,readonly" \
+            --workdir /workspace --entrypoint /opt/venv/bin/python \
+            miasm-disasm-mcp -m unittest discover -s tests -p 'test_mcp.py' -v
+
+  test:
+    name: Rust ${{ matrix.rust }} / Linux
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        rust: ['1.85.0', stable]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: ${{ matrix.rust }}
+          components: rustfmt, clippy
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Miasm
+        run: |
+          python -m venv .venv
+          .venv/bin/python -m pip install -r python/requirements.txt
+          echo "MIASM_PYTHON=$GITHUB_WORKSPACE/.venv/bin/python" >> "$GITHUB_ENV"
+      - name: Generate test fixtures
+        run: python scripts/make_fixtures.py
+      - name: Check formatting
+        run: cargo fmt --all --check
+      - name: Lint
+        run: cargo clippy --locked --all-targets -- -D warnings
+      - name: Test including Miasm integration
+        run: cargo test --locked -- --include-ignored
+      - name: Verify Cargo package
+        run: cargo package --locked

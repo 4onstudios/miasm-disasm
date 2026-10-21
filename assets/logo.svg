@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="176" viewBox="0 0 160 176" fill="none" role="img" aria-labelledby="logo-title logo-description">
+  <title id="logo-title">miasm-disasm logo</title>
+  <desc id="logo-description">A mint M formed by branching control-flow paths inside a charcoal hexagon. An amber decision node connects the paths, with byte-like marks at the edges.</desc>
+  <path d="M80 4 152 46V130L80 172 8 130V46Z" fill="#18282B"/>
+  <path d="M80 13 144 50V126L80 163 16 126V50Z" stroke="#3B5356" stroke-width="1.5"/>
+  <g stroke="#6FE2C2" stroke-width="8" stroke-linecap="square" stroke-linejoin="miter">
+    <path d="M44 118V62L80 90 116 62V118"/>
+    <path d="M80 34V44L44 62M80 44 116 62" stroke-width="4"/>
+  </g>
+  <path d="M80 100V126" stroke="#F4B64F" stroke-width="4"/>
+  <path d="m80 78 12 12-12 12-12-12Z" fill="#F4B64F"/>
+  <g fill="#F1F7F5">
+    <path d="M36 54H52V70H36ZM108 54H124V70H108Z"/>
+    <path d="M75 29H85V39H75Z"/>
+  </g>
+  <g fill="#6FE2C2">
+    <path d="M36 110H52V126H36ZM108 110H124V126H108Z"/>
+  </g>
+  <path d="M74 130H86M74 136H86" stroke="#F4B64F" stroke-width="3"/>
+  <path d="M24 82H30M24 92H30M130 82H136M130 92H136" stroke="#6B8688" stroke-width="3"/>
+</svg>
